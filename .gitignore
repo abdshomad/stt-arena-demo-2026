@@ -1,0 +1,5 @@
+screenshots/*
+.vite/*
+logs/*
+engines/cache/**
+.secrets

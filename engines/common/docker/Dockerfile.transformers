@@ -1,0 +1,9 @@
+FROM python:3.11-slim
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg libsndfile1 git build-essential \
+    && rm -rf /var/lib/apt/lists/*
+# One resolve: torch+torchvision+torchaudio (CUDA) stay version-matched
+RUN pip install --no-cache-dir torch torchvision torchaudio \
+    "transformers>=4.56" accelerate librosa soundfile sentencepiece tiktoken \
+    "mistral-common[audio]>=1.8" timm num2words \
+    fastapi uvicorn python-multipart
+WORKDIR /app

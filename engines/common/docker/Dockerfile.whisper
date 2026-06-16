@@ -1,0 +1,7 @@
+FROM python:3.11-slim
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg libsndfile1 \
+    && rm -rf /var/lib/apt/lists/*
+# Single resolve so torch/CUDA wheels stay consistent (GPU inference)
+RUN pip install --no-cache-dir torch openai-whisper fastapi uvicorn python-multipart
+ENV NUMBA_CACHE_DIR=/tmp
+WORKDIR /app

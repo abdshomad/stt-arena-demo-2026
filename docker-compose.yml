@@ -1,0 +1,303 @@
+# STT Arena — real local engines, on-demand loading.
+# NOTE: run ./engines/build-bases.sh once before `docker compose build`
+# (engine images derive from the stt-arena-base:* images it produces).
+
+x-engine-common: &engine-common
+  restart: unless-stopped
+  env_file:
+    - .secrets
+  environment: &engine-env
+    IDLE_UNLOAD_SECONDS: "600"
+    MAX_LOADED_VARIANTS: "2"
+    HF_HOME: /root/.cache/huggingface
+  volumes:
+    - ./engines/cache:/root/.cache
+  gpus: all
+
+services:
+  # Nginx Router Gateway
+  nginx-router:
+    image: nginx:alpine
+    container_name: stt-arena-nginx-router
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./engines/nginx-router.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - router
+    restart: unless-stopped
+
+  # Router: dispatch by modelId + engine health aggregation + real resource state
+  router:
+    build:
+      context: ./engines
+      dockerfile: router/Dockerfile
+    container_name: stt-arena-router
+    gpus: all
+    restart: unless-stopped
+
+  whisper-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: whisper/Dockerfile}
+    container_name: whisper-engine
+    environment:
+      <<: *engine-env
+      CUDA_VISIBLE_DEVICES: "0"
+
+  faster-whisper-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: faster-whisper/Dockerfile}
+    container_name: faster-whisper-engine
+    environment:
+      <<: *engine-env
+      CUDA_VISIBLE_DEVICES: "0"
+
+  whisperx-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: whisperx/Dockerfile}
+    container_name: whisperx-engine
+    environment:
+      <<: *engine-env
+      CUDA_VISIBLE_DEVICES: "0"
+
+  whisper-cpp-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: whisper-cpp/Dockerfile}
+    container_name: whisper-cpp-engine
+    environment:
+      <<: *engine-env
+      CUDA_VISIBLE_DEVICES: "0"
+
+  meta-omnilingual-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: meta-omnilingual/Dockerfile}
+    container_name: meta-omnilingual-engine
+    environment:
+      <<: *engine-env
+      CUDA_VISIBLE_DEVICES: "1"
+
+  microsoft-vibe-voice-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: microsoft-vibe-voice/Dockerfile}
+    container_name: microsoft-vibe-voice-engine
+
+  nvidia-nemotron-3.5-asr-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: nvidia-nemotron-3.5-asr/Dockerfile}
+    container_name: nvidia-nemotron-3.5-asr-engine
+
+  nvidia-nemotron-omni-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: nvidia-nemotron-omni/Dockerfile}
+    container_name: nvidia-nemotron-omni-engine
+
+  mega-asr-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: mega-asr/Dockerfile}
+    container_name: mega-asr-engine
+
+  nvidia-parakeet-tdt-v3-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: nvidia-parakeet-tdt-v3/Dockerfile}
+    container_name: nvidia-parakeet-tdt-v3-engine
+    environment:
+      <<: *engine-env
+      CUDA_VISIBLE_DEVICES: "1"
+
+  google-gemma-4-audio-understanding-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: google-gemma-4-audio-understanding/Dockerfile}
+    container_name: google-gemma-4-audio-understanding-engine
+
+  cahya-whisper-medium-id-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: cahya-whisper-medium-id/Dockerfile}
+    container_name: cahya-whisper-medium-id-engine
+    environment:
+      <<: *engine-env
+      CUDA_VISIBLE_DEVICES: "0"
+
+  cahya-whisper-small-id-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: cahya-whisper-small-id/Dockerfile}
+    container_name: cahya-whisper-small-id-engine
+    environment:
+      <<: *engine-env
+      CUDA_VISIBLE_DEVICES: "0"
+
+  cahya-faster-whisper-medium-id-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: cahya-faster-whisper-medium-id/Dockerfile}
+    container_name: cahya-faster-whisper-medium-id-engine
+    environment:
+      <<: *engine-env
+      CUDA_VISIBLE_DEVICES: "0"
+
+  indonesian-nlp-wav2vec2-indonesian-javanese-sundanese-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: indonesian-nlp-wav2vec2-indonesian-javanese-sundanese/Dockerfile}
+    container_name: indonesian-nlp-wav2vec2-indonesian-javanese-sundanese-engine
+    environment:
+      <<: *engine-env
+      CUDA_VISIBLE_DEVICES: "0"
+
+  indonesian-nlp-wav2vec2-large-xlsr-indonesian-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: indonesian-nlp-wav2vec2-large-xlsr-indonesian/Dockerfile}
+    container_name: indonesian-nlp-wav2vec2-large-xlsr-indonesian-engine
+    environment:
+      <<: *engine-env
+      CUDA_VISIBLE_DEVICES: "0"
+
+  google-ai-edge-eloquent-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: google-ai-edge-eloquent/Dockerfile}
+    container_name: google-ai-edge-eloquent-engine
+    environment:
+      <<: *engine-env
+      CUDA_VISIBLE_DEVICES: "1"
+
+  google-omni-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: google-omni/Dockerfile}
+    container_name: google-omni-engine
+
+  inword-ai-stt-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: inword-ai-stt/Dockerfile}
+    container_name: inword-ai-stt-engine
+
+  gpt-realtime-whisper-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: gpt-realtime-whisper/Dockerfile}
+    container_name: gpt-realtime-whisper-engine
+
+  moonshine-voice-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: moonshine-voice/Dockerfile}
+    container_name: moonshine-voice-engine
+    environment:
+      <<: *engine-env
+      CUDA_VISIBLE_DEVICES: "0"
+
+  voxtral-mini-4b-realtime-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: voxtral-mini-4b-realtime/Dockerfile}
+    container_name: voxtral-mini-4b-realtime-engine
+    environment:
+      <<: *engine-env
+      CUDA_VISIBLE_DEVICES: "1"
+
+  nvidia-personaplex-7b-v1-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: nvidia-personaplex-7b-v1/Dockerfile}
+    container_name: nvidia-personaplex-7b-v1-engine
+    environment:
+      <<: *engine-env
+      CUDA_VISIBLE_DEVICES: "1"
+
+  moss-sats-asr-with-diarization-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: moss-sats-asr-with-diarization/Dockerfile}
+    container_name: moss-sats-asr-with-diarization-engine
+
+  srst-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: srst/Dockerfile}
+    container_name: srst-engine
+
+  nvidia-multitalker-asr-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: nvidia-multitalker-asr/Dockerfile}
+    container_name: nvidia-multitalker-asr-engine
+
+  kyutai-stt-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: kyutai-stt/Dockerfile}
+    container_name: kyutai-stt-engine
+    environment:
+      <<: *engine-env
+      CUDA_VISIBLE_DEVICES: "1"
+
+  nvidia-nemotron-speech-streaming-en-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: nvidia-nemotron-speech-streaming-en/Dockerfile}
+    container_name: nvidia-nemotron-speech-streaming-en-engine
+    environment:
+      <<: *engine-env
+      CUDA_VISIBLE_DEVICES: "0"
+
+  nvidia-canary-1b-v2-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: nvidia-canary-1b-v2/Dockerfile}
+    container_name: nvidia-canary-1b-v2-engine
+    environment:
+      <<: *engine-env
+      CUDA_VISIBLE_DEVICES: "0"
+
+  nvidia-canary-180m-flash-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: nvidia-canary-180m-flash/Dockerfile}
+    container_name: nvidia-canary-180m-flash-engine
+    environment:
+      <<: *engine-env
+      CUDA_VISIBLE_DEVICES: "0"
+
+  nvidia-parakeet-ctc-0.6b-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: nvidia-parakeet-ctc-0.6b/Dockerfile}
+    container_name: nvidia-parakeet-ctc-0.6b-engine
+    environment:
+      <<: *engine-env
+      CUDA_VISIBLE_DEVICES: "0"
+
+  nvidia-parakeet-rnnt-1.1b-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: nvidia-parakeet-rnnt-1.1b/Dockerfile}
+    container_name: nvidia-parakeet-rnnt-1.1b-engine
+    environment:
+      <<: *engine-env
+      CUDA_VISIBLE_DEVICES: "1"
+
+  nvidia-parakeet-tdt-0.6b-v2-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: nvidia-parakeet-tdt-0.6b-v2/Dockerfile}
+    container_name: nvidia-parakeet-tdt-0.6b-v2-engine
+    environment:
+      <<: *engine-env
+      CUDA_VISIBLE_DEVICES: "0"
+
+  nvidia-canary-1b-flash-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: nvidia-canary-1b-flash/Dockerfile}
+    container_name: nvidia-canary-1b-flash-engine
+    environment:
+      <<: *engine-env
+      CUDA_VISIBLE_DEVICES: "0"
+
+  kyutai-stt-2.6b-en-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: kyutai-stt-2.6b-en/Dockerfile}
+    container_name: kyutai-stt-2.6b-en-engine
+    environment:
+      <<: *engine-env
+      CUDA_VISIBLE_DEVICES: "1"
+
+  # Frontend & Server Application
+  stt-arena:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: stt-arena-design
+    ports:
+      - "3042:3000"
+    environment:
+      - ASR_MODE=live
+      - REAL_ASR_API_URL=http://nginx-router:5000/transcribe
+      - REAL_GPU_API_URL=http://nginx-router:5000/gpus
+      - REAL_ENGINE_HEALTH_URL=http://nginx-router:5000/engines/health
+    env_file:
+      - .secrets
+    depends_on:
+      - nginx-router
+    restart: unless-stopped

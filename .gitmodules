@@ -1,0 +1,6 @@
+[submodule "stt-arena-design"]
+	path = stt-arena-design
+	url = https://github.com/abdshomad/stt-arena-design.git
+[submodule "autonomous-coding-agents"]
+	path = autonomous-coding-agents
+	url = https://github.com/abdshomad/autonomous-coding-agents.git
