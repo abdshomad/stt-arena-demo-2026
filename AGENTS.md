@@ -13,7 +13,7 @@ To preserve the integrity of the repository's dependency model, all AI agents op
 3. **Clean Commits**: Project modifications should strictly focus on the parent repository. Any changes to submodules must be done by modifying the submodule upstream or updating the tracked commit reference in the parent repository.
 
 ### Tracked Submodules
-- [autonomous-coding-agents](file:///home/aiserver/LABS/AI-VOICE/stt-arena-autonomously/autonomous-coding-agents)
+- [autonomous-coding-agents](../stt-arena-autonomously/autonomous-coding-agents)
 
 ## Python Dependency Management Guidelines
 
@@ -27,7 +27,7 @@ To ensure fast, clean, and reproducible Python environments, all AI agents must 
 ## Issue Tracking Guidelines
 
 To ensure transparent issue tracking and maintainable debugging logs, all AI agents must record every encountered and resolved issue or bug:
-- Save details of each issue inside a dedicated markdown file in the [issues/](file:///home/aiserver/LABS/AI-VOICE/stt-arena-demo-2026/issues) directory.
+- Save details of each issue inside a dedicated markdown file in the [issues/](issues) directory.
 - Name the files sequentially starting with a 3-digit number (e.g. `001-issue-description.md`, `002-another-issue.md`).
 - Each issue file should document:
   - **Symptoms**: Visual glitches, traceback, logs, or error codes.

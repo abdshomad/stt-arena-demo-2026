@@ -1,1 +1,0 @@
-Error: Skipped - Model size exceeds available single GPU VRAM (requires 30GB-60GB VRAM, leading to out-of-memory or excessive download times).

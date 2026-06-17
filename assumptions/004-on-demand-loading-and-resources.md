@@ -14,7 +14,7 @@ Date: 2026-06-12
 3. **CPU inference** for all local engines (`device=cpu`). 503GB host RAM is the budget; the
    heaviest models (voxtral 3B ≈ 12GB fp32, gemma-3n, kyutai 1B) fit comfortably even if several
    are loaded at once, and idle-unload keeps steady-state low.
-4. **Shared HuggingFace cache**: all engines mount `./engines/cache` at `/root/.cache` so model
+4. **Shared HuggingFace cache**: all engines mount `/home/aiserver/.cache` at `/root/.cache` so model
    weights download once and persist across rebuilds/restarts.
 5. **First-request latency is accepted**: a cold request may take minutes (download + load).
    `/health` exposes `{available, loaded, loading}` so the UI can show state; the app's 30s

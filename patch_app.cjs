@@ -92,8 +92,74 @@ patchFile(
   { critical: false }
 );
 
+/* ------------------------------------------------------------------ */
+/* 5. FunASR models registration in modelsData.ts                     */
+/* ------------------------------------------------------------------ */
+patchFile(
+  'src/data/modelsData.ts',
+  'funasr-models',
+  'export const CANDIDATE_MODELS: STTModel[] = [',
+  `export const CANDIDATE_MODELS: STTModel[] = [
+  {
+    id: "funasr-sensevoice",
+    name: "FunASR SenseVoiceSmall",
+    multilingual: true,
+    indonesianSupport: true,
+    emotionDetection: true,
+    mumblingRobustness: true,
+    indonesiaSpecific: false,
+    sourceType: "Local / FunASR",
+    werEnglish: 5.5,
+    werIndonesian: 11.2,
+    werMumbled: 9.8,
+    latencyMs: 120,
+    vramRequiredGb: 0.5,
+    cpuViability: "Excellent",
+    throughputWordsPerSec: 150,
+    license: "Apache-2.0"
+  },
+  {
+    id: "funasr-paraformer-zh",
+    name: "FunASR Paraformer Chinese",
+    multilingual: false,
+    indonesianSupport: false,
+    emotionDetection: false,
+    mumblingRobustness: true,
+    indonesiaSpecific: false,
+    sourceType: "Local / FunASR",
+    werEnglish: 25.0,
+    werIndonesian: 45.0,
+    werMumbled: 30.0,
+    latencyMs: 150,
+    vramRequiredGb: 0.9,
+    cpuViability: "Excellent",
+    throughputWordsPerSec: 130,
+    license: "Apache-2.0"
+  },
+  {
+    id: "funasr-paraformer-en",
+    name: "FunASR Paraformer English",
+    multilingual: false,
+    indonesianSupport: false,
+    emotionDetection: false,
+    mumblingRobustness: true,
+    indonesiaSpecific: false,
+    sourceType: "Local / FunASR",
+    werEnglish: 6.2,
+    werIndonesian: 35.0,
+    werMumbled: 11.5,
+    latencyMs: 150,
+    vramRequiredGb: 0.9,
+    cpuViability: "Excellent",
+    throughputWordsPerSec: 130,
+    license: "Apache-2.0"
+  },`,
+  { critical: false }
+);
+
 if (failures > 0) {
   console.error(`${failures} critical patch(es) failed.`);
   process.exit(1);
 }
 console.log('All patches applied.');
+

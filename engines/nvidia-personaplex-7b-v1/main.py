@@ -20,7 +20,7 @@ def load(variant: str):
 
     token = os.getenv("HF_TOKEN")
     device = torch_device()
-    dtype = torch.float32
+    dtype = torch.bfloat16 if device == "cuda" else torch.float32
 
     # 1. Load config with model_type override to "moshi"
     config_path = hf_hub_download(repo_id=REPO, filename="config.json", token=token)
@@ -45,7 +45,7 @@ def load(variant: str):
 
     # 4. Load Tokenizer
     print("Loading tokenizer...")
-    tokenizer = AutoTokenizer.from_pretrained(REPO, token=token)
+    tokenizer = AutoTokenizer.from_pretrained("kmhf/hf-moshiko", token=token)
 
     return {
         "model": model,
@@ -72,7 +72,7 @@ def transcribe(handle, wav_path, lang_code, temperature, model_id):
     # Encode audio with Mimi
     with torch.no_grad():
         encoded = mimi.encode(audio_tensor)
-        audio_codes = encoded.audio_codes  # Shape: [batch, codebooks, steps]
+        audio_codes = encoded.audio_codes[:, :8, :]  # Shape: [batch, codebooks, steps]
 
     # Generate unconditional inputs as template
     inputs = model.get_unconditional_inputs(num_samples=1)
@@ -104,7 +104,10 @@ def transcribe(handle, wav_path, lang_code, temperature, model_id):
         )
 
     # Decode text tokens
-    text_tokens = output.sequences[0].tolist()
+    if hasattr(output, "sequences"):
+        text_tokens = output.sequences[0].tolist()
+    else:
+        text_tokens = output[0].tolist()
     text = tokenizer.decode(text_tokens, skip_special_tokens=True).strip()
 
     return {"text": text, "language": None, "segments": []}

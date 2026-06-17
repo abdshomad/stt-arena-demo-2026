@@ -44,7 +44,7 @@ docker compose up --build -d
 ```
 
 Engines load their real models **on demand** at the first transcription request
-(first call downloads weights into `engines/cache/` and may take minutes); idle
+(first call downloads weights into `/home/aiserver/.cache/` and may take minutes); idle
 models unload automatically after 10 minutes. See `assumptions/` for all design
 decisions.
 

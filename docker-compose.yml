@@ -10,8 +10,9 @@ x-engine-common: &engine-common
     IDLE_UNLOAD_SECONDS: "600"
     MAX_LOADED_VARIANTS: "2"
     HF_HOME: /root/.cache/huggingface
+    CUDA_VISIBLE_DEVICES: "0"
   volumes:
-    - ./engines/cache:/root/.cache
+    - /home/aiserver/.cache:/root/.cache
   gpus: all
 
 services:
@@ -74,7 +75,7 @@ services:
     container_name: meta-omnilingual-engine
     environment:
       <<: *engine-env
-      CUDA_VISIBLE_DEVICES: "1"
+      CUDA_VISIBLE_DEVICES: "0"
 
   microsoft-vibe-voice-engine:
     <<: *engine-common
@@ -102,7 +103,7 @@ services:
     container_name: nvidia-parakeet-tdt-v3-engine
     environment:
       <<: *engine-env
-      CUDA_VISIBLE_DEVICES: "1"
+      CUDA_VISIBLE_DEVICES: "0"
 
   google-gemma-4-audio-understanding-engine:
     <<: *engine-common
@@ -155,7 +156,7 @@ services:
     container_name: google-ai-edge-eloquent-engine
     environment:
       <<: *engine-env
-      CUDA_VISIBLE_DEVICES: "1"
+      CUDA_VISIBLE_DEVICES: "0"
 
   google-omni-engine:
     <<: *engine-common
@@ -186,7 +187,7 @@ services:
     container_name: voxtral-mini-4b-realtime-engine
     environment:
       <<: *engine-env
-      CUDA_VISIBLE_DEVICES: "1"
+      CUDA_VISIBLE_DEVICES: "0"
 
   nvidia-personaplex-7b-v1-engine:
     <<: *engine-common
@@ -194,7 +195,7 @@ services:
     container_name: nvidia-personaplex-7b-v1-engine
     environment:
       <<: *engine-env
-      CUDA_VISIBLE_DEVICES: "1"
+      CUDA_VISIBLE_DEVICES: "0"
 
   moss-sats-asr-with-diarization-engine:
     <<: *engine-common
@@ -217,7 +218,7 @@ services:
     container_name: kyutai-stt-engine
     environment:
       <<: *engine-env
-      CUDA_VISIBLE_DEVICES: "1"
+      CUDA_VISIBLE_DEVICES: "0"
 
   nvidia-nemotron-speech-streaming-en-engine:
     <<: *engine-common
@@ -257,12 +258,20 @@ services:
     container_name: nvidia-parakeet-rnnt-1.1b-engine
     environment:
       <<: *engine-env
-      CUDA_VISIBLE_DEVICES: "1"
+      CUDA_VISIBLE_DEVICES: "0"
 
   nvidia-parakeet-tdt-0.6b-v2-engine:
     <<: *engine-common
     build: {context: ./engines, dockerfile: nvidia-parakeet-tdt-0.6b-v2/Dockerfile}
     container_name: nvidia-parakeet-tdt-0.6b-v2-engine
+    environment:
+      <<: *engine-env
+      CUDA_VISIBLE_DEVICES: "0"
+
+  parakeet-cpp-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: parakeet-cpp/Dockerfile}
+    container_name: parakeet-cpp-engine
     environment:
       <<: *engine-env
       CUDA_VISIBLE_DEVICES: "0"
@@ -281,7 +290,15 @@ services:
     container_name: kyutai-stt-2.6b-en-engine
     environment:
       <<: *engine-env
-      CUDA_VISIBLE_DEVICES: "1"
+      CUDA_VISIBLE_DEVICES: "0"
+
+  funasr-engine:
+    <<: *engine-common
+    build: {context: ./engines, dockerfile: funasr/Dockerfile}
+    container_name: funasr-engine
+    environment:
+      <<: *engine-env
+      CUDA_VISIBLE_DEVICES: "0"
 
   # Frontend & Server Application
   stt-arena:

@@ -42,6 +42,7 @@ def load(variant: str):
         device_map="auto" if device == "cuda" else None,
         trust_remote_code=True,
         token=token,
+        attn_implementation="eager",
     )
     return {"processor": processor, "model": model, "device": device}
 
